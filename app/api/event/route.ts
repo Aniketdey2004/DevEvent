@@ -2,6 +2,8 @@ import connectDB from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Event } from "@/database";
 import cloudinary from "@/lib/cloudinaryConfig";
+
+
 export async function POST(req: NextRequest){
     try {
         await connectDB();
@@ -41,5 +43,17 @@ export async function POST(req: NextRequest){
     } catch (e) {
         console.error(e);
         return NextResponse.json({ message: 'Event Creation failed' , error: e instanceof Error ? e.message:'Unknown'}, { status:500 });
+    }
+}
+
+export async function GET(){
+    try {
+        await connectDB();
+
+        const events=await Event.find().sort({ createdAt: -1});
+
+        return NextResponse.json({ message: 'Events fetched Successfully', events}, {status:200 });
+    } catch (e) {
+        return NextResponse.json({ message: 'Event fetching failed', error: e }, { status: 500 });
     }
 }
